@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Unit 3: The Time — Revision</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",Arial,sans-serif;font-size:24px;color:#26324b;background:#fff8ee;}
+#app{display:flex;flex-direction:column;height:100%;user-select:none;-webkit-user-select:none;}
+header{flex:0 0 auto;display:flex;align-items:center;gap:16px;padding:10px 20px;background:linear-gradient(90deg,#ff8c42,#ffb347);color:#fff;}
+header h1{font-size:32px;margin:0;font-weight:800;letter-spacing:.5px;}
+header .sub{font-size:20px;opacity:.95;}
+#speechNote{display:none;margin-left:auto;background:#fff;color:#c2410c;font-size:18px;font-weight:700;padding:8px 14px;border-radius:12px;}
+#tabs{flex:0 0 auto;display:flex;gap:8px;padding:8px 12px;background:#ffe9d2;}
+.tab{flex:1 1 0;min-height:56px;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;color:#8a4b12;background:#fff;border:3px solid #ffb347;border-radius:14px;cursor:pointer;touch-action:manipulation;white-space:nowrap;overflow:hidden;padding:0 6px;}
+.tab.active{background:#ff8c42;color:#fff;border-color:#e56b1f;}
+.content-area{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:20px 24px 40px;}
+.panel{display:none;}
+.panel.active{display:block;}
+.card{background:#fff;border-radius:20px;padding:20px 24px;margin:0 auto 20px;max-width:1500px;box-shadow:0 3px 10px rgba(60,40,10,.12);border:3px solid #ffe1bd;}
+.phead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px;}
+.phead h2{font-size:38px;margin:0;color:#d9480f;}
+.phead .inst{font-size:24px;font-weight:700;color:#3d5a80;background:#e8f4ff;padding:8px 16px;border-radius:12px;}
+.controls{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap;}
+button{font-family:inherit;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none;border:none;}
+.btn{min-height:64px;min-width:64px;padding:10px 26px;font-size:26px;font-weight:800;border-radius:16px;color:#fff;background:#3d5a80;box-shadow:0 4px 0 #2a3f5c;}
+.btn:active{transform:translateY(3px);box-shadow:none;}
+.btn.orange{background:#ff8c42;box-shadow:0 4px 0 #d96a1e;}
+.btn.green{background:#2f9e44;box-shadow:0 4px 0 #1f6e30;}
+.btn.small{min-height:52px;font-size:21px;padding:8px 18px;}
+.btn:disabled{opacity:.45;cursor:default;}
+.tiles{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;}
+.tile{min-width:130px;min-height:76px;padding:10px 20px;font-size:30px;font-weight:800;border-radius:16px;background:#e8f4ff;color:#1d3557;border:3px solid #98c1d9;box-shadow:0 4px 0 #98c1d9;}
+.tile:active{transform:translateY(3px);box-shadow:none;}
+.tile.correct{background:#b7f0c2;border-color:#2f9e44;color:#1f6e30;}
+.tile.wrong{animation:shake .4s;}
+.tile.picked{background:#ffd8a8;border-color:#ff8c42;color:#8a4b12;}
+.tile.done{background:#dee2e6;color:#868e96;border-color:#ced4da;box-shadow:none;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+.feedback{min-height:56px;font-size:28px;font-weight:800;text-align:center;margin:10px 0;color:#2f9e44;}
+.feedback.bad{color:#e03131;}
+.score{font-size:26px;font-weight:800;color:#3d5a80;background:#e8f4ff;border-radius:12px;padding:8px 18px;}
+.big-word{font-size:56px;font-weight:900;color:#1d3557;text-align:center;letter-spacing:1px;}
+.hyphen-hl{color:#e03131;background:#ffe3e3;border-radius:10px;padding:0 8px;}
+.pat-hl{color:#e03131;background:#ffe3e3;border-radius:8px;padding:0 6px;font-weight:900;}
+.row{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;justify-content:center;}
+.col{display:flex;flex-direction:column;gap:14px;align-items:center;}
+.clockwrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.digital{font-size:44px;font-weight:900;color:#fff;background:#1d3557;border-radius:16px;padding:8px 30px;font-variant-numeric:tabular-nums;}
+.sentence{font-size:36px;font-weight:800;color:#d9480f;text-align:center;}
+.pm-btns{display:flex;gap:12px;align-items:center;}
+.pm-btns .lbl{font-size:24px;font-weight:800;color:#3d5a80;min-width:110px;text-align:right;}
+.choices{display:flex;flex-direction:column;gap:16px;align-items:stretch;max-width:800px;margin:0 auto;}
+.choice{min-height:76px;font-size:30px;font-weight:800;border-radius:16px;background:#e8f4ff;color:#1d3557;border:3px solid #98c1d9;padding:12px 24px;text-align:left;}
+.choice.correct{background:#b7f0c2;border-color:#2f9e44;color:#1f6e30;}
+.choice.wrong{animation:shake .4s;}
+.choice.reveal{background:#b7f0c2;border-color:#2f9e44;}
+.matchzone{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;}
+.mcol{display:flex;flex-direction:column;gap:16px;}
+.mtile{min-width:340px;min-height:72px;font-size:26px;font-weight:800;border-radius:16px;background:#fff3bf;color:#5f3d00;border:3px solid #fab005;padding:10px 20px;}
+.mtile.right{background:#e8f4ff;color:#1d3557;border-color:#98c1d9;}
+.mtile.picked{outline:6px solid #ff8c42;}
+.mtile.done{background:#b7f0c2;border-color:#2f9e44;color:#1f6e30;outline:none;}
+.spell-out{min-height:80px;font-size:44px;font-weight:900;letter-spacing:8px;color:#1d3557;background:#f1f3f5;border-radius:14px;padding:10px 24px;text-align:center;min-width:400px;}
+.dialogue{font-size:32px;font-weight:700;color:#26324b;line-height:2.1;background:#f8f9fa;border-radius:16px;padding:18px 26px;}
+.gap{display:inline-block;min-width:170px;text-align:center;border-bottom:5px dashed #ff8c42;color:#d9480f;font-weight:900;padding:0 10px;}
+.team-board{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+.team{flex:1 1 380px;max-width:520px;border-radius:20px;padding:18px;text-align:center;border:4px solid;}
+.teamA{background:#e7f5ff;border-color:#339af0;}
+.teamB{background:#fff0f0;border-color:#ff6b6b;}
+.team h3{font-size:36px;margin:0 0 8px;}
+.teamA h3{color:#1971c2;}.teamB h3{color:#e03131;}
+.team .pts{font-size:72px;font-weight:900;color:#26324b;}
+.team.turn{box-shadow:0 0 0 8px #ffd43b;}
+.qcard{background:#fff;border-radius:20px;padding:24px;max-width:1200px;margin:0 auto;border:3px solid #ffe1bd;box-shadow:0 3px 10px rgba(60,40,10,.12);}
+.qnum{font-size:22px;font-weight:800;color:#868e96;margin-bottom:8px;}
+.qtext{font-size:34px;font-weight:800;color:#1d3557;margin-bottom:16px;text-align:center;}
+.remember{background:#fff9db;border:4px solid #fab005;border-radius:20px;padding:24px 30px;max-width:1000px;margin:0 auto;}
+.remember h2{font-size:40px;color:#e8890c;margin:0 0 12px;text-align:center;}
+.remember li{font-size:30px;font-weight:700;margin:12px 0;color:#5f3d00;}
+.teacher-bar{display:flex;gap:16px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
+.center{text-align:center;}
+.note{font-size:20px;color:#868e96;text-align:center;}
+.clocks3{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;}
+.clockopt{background:#fff;border:4px solid #98c1d9;border-radius:18px;padding:10px;cursor:pointer;touch-action:manipulation;}
+.clockopt.correct{border-color:#2f9e44;background:#b7f0c2;}
+.clockopt.wrong{animation:shake .4s;}
+.wordcard{min-width:200px;min-height:90px;font-size:40px;font-weight:800;border-radius:18px;background:#e8f4ff;color:#1d3557;border:3px solid #98c1d9;padding:12px 26px;}
+.wordcard:active{transform:translateY(3px);}
+.soundtag{font-size:22px;font-weight:800;color:#fff;background:#845ef7;border-radius:10px;padding:4px 12px;}
+.hidden{display:none!important;}
+@media (max-width:1350px){
+  .tab{font-size:17px;}
+  header h1{font-size:26px;}
+  .phead h2{font-size:32px;}
+}
+
+/* ===== phone optimisation ===== */
+@supports (height:100dvh){html,body{height:100dvh}}
+.content-area{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+#tabs{overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity}
+#tabs::-webkit-scrollbar{display:none}
+.tab{flex:1 0 auto;gap:6px;padding:0 14px;scroll-snap-align:center}
+.wn{font-size:24px;color:#5c7cfa}.wn.big{font-size:40px}.wn.sm{font-size:22px}
+.numtile{min-width:150px;font-size:34px}.onetile{min-width:110px}
+.sentence.xl{font-size:42px}.sentout{letter-spacing:2px;font-size:34px;min-width:600px}
+.odd{min-width:240px}.letter{min-width:90px;font-size:40px}.fw{min-width:160px}
+.fixnote{font-size:26px;color:#2f9e44}
+@media (max-width:700px){
+ body{font-size:16px}
+ header{flex-wrap:wrap;gap:2px 10px;padding:8px 14px;padding-top:calc(8px + env(safe-area-inset-top))}
+ header h1{font-size:20px}header .sub{font-size:14px}
+ #speechNote{margin-left:0;width:100%;font-size:13px;padding:4px 10px}
+ #tabs{order:3;gap:4px;padding:6px 8px calc(6px + env(safe-area-inset-bottom));border-top:2px solid #ffc999}
+ .tab{flex-direction:column;min-height:54px;min-width:74px;font-size:12px;gap:0;padding:4px 6px;border-width:2px;border-radius:12px}
+ .tab .ti{font-size:20px;line-height:1.1}
+ .content-area{padding:12px 10px 24px}
+ .card{padding:12px;border-radius:16px;border-width:2px;margin-bottom:12px}
+ .phead{gap:8px;margin-bottom:10px}
+ .phead h2{font-size:22px;width:100%}
+ .phead .inst{font-size:15px;padding:6px 10px;border-radius:10px}
+ .controls{margin-left:0;width:100%;gap:8px}.controls .btn{flex:1 1 auto}
+ .btn{min-height:52px;min-width:52px;padding:8px 16px;font-size:18px;border-radius:14px}
+ .btn.small{min-height:48px;font-size:16px;padding:6px 12px}
+ .score{font-size:16px;padding:6px 12px;align-self:center}
+ .tiles{gap:8px}
+ .tile{min-width:0;min-height:56px;padding:8px 12px;font-size:20px;border-radius:12px}
+ .numtile{flex:1 1 26%;font-size:26px}
+ .onetile,.fw,.odd{min-width:0}.odd{flex:1 1 40%}.letter{min-width:56px;font-size:28px}
+ .feedback{font-size:18px;min-height:36px;margin:6px 0}
+ .big-word{font-size:34px;letter-spacing:0}
+ .wn{font-size:16px}.wn.big{font-size:24px}.wn.sm{font-size:14px}
+ .row{gap:12px}.col{width:100%}.clockwrap{width:100%}
+ .digital{font-size:32px;padding:6px 20px}
+ .sentence{font-size:24px}.sentence.xl{font-size:26px}
+ .pm-btns .lbl{font-size:18px;min-width:70px}
+ .choices{gap:10px}.choice{min-height:56px;font-size:19px;padding:10px 14px}
+ .matchzone{gap:12px;flex-direction:column}.mcol{width:100%;gap:10px}
+ .mtile{min-width:0;width:100%;min-height:56px;font-size:18px}
+ .spell-out{min-width:0;width:100%;font-size:30px;letter-spacing:3px;min-height:60px;padding:8px 12px}
+ .sentout{font-size:22px;letter-spacing:1px}
+ .dialogue{font-size:19px;line-height:1.9;padding:12px 14px}
+ .gap{min-width:100px;border-bottom-width:4px}
+ .wordcard{min-width:0;flex:1 1 40%;min-height:64px;font-size:26px;padding:8px 12px}
+ .team-board{gap:10px;flex-wrap:nowrap}
+ .team{flex:1 1 0;min-width:0;padding:10px;border-width:3px}
+ .team h3{font-size:20px}.team .pts{font-size:44px}.team.turn{box-shadow:0 0 0 5px #ffd43b}
+ .qcard{padding:14px;border-radius:16px}.qtext{font-size:21px}.qnum{font-size:14px}
+ .teacher-bar{gap:8px}.teacher-bar .btn{flex:1 1 40%}
+ .remember{padding:14px 16px}.remember h2{font-size:26px}.remember li{font-size:19px}
+ .note{font-size:14px}.soundtag{font-size:15px}.fixnote{font-size:17px}
+}
+@media (max-height:500px){
+ header{padding:4px 14px}header h1{font-size:20px}header .sub{display:none}
+ .tab{min-height:40px;font-size:15px}.btn{min-height:48px;font-size:20px}
+ .content-area{padding:12px 14px 24px}.phead h2{font-size:26px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>🕐 Unit 3 · The Time</h1>
+    <div class="sub">Final Revision — Sunrise 4</div>
+    <div id="speechNote">🔇 No sound: teacher reads aloud</div>
+  </header>
+  <nav id="tabs">
+    <div class="tab" data-p="p1"><span class="ti">⚡</span><span class="tl">Lightning</span></div>
+    <div class="tab" data-p="p2"><span class="ti">🔢</span><span class="tl">Numbers</span></div>
+    <div class="tab" data-p="p3"><span class="ti">🕐</span><span class="tl">Clock Lab</span></div>
+    <div class="tab" data-p="p4"><span class="ti">👀</span><span class="tl">Read &amp; Set</span></div>
+    <div class="tab" data-p="p5"><span class="ti">🗣</span><span class="tl">Talk</span></div>
+    <div class="tab" data-p="p6"><span class="ti">🔊</span><span class="tl">Sounds</span></div>
+    <div class="tab" data-p="p7"><span class="ti">✏</span><span class="tl">Write It</span></div>
+    <div class="tab" data-p="p8"><span class="ti">🏆</span><span class="tl">Teams</span></div>
+  </nav>
+  <main class="content-area" id="content">
+
+  <!-- PANEL 1: Number Lightning -->
+  <section class="panel" id="p1">
+    <div class="card">
+      <div class="phead">
+        <h2>⚡ Number Lightning</h2>
+        <div class="inst">Listen. Tap the number.</div>
+        <div class="controls">
+          <button class="btn orange" id="p1hear">▶ Hear a number</button>
+          <button class="btn small" id="p1reset">Reset</button>
+          <div class="score" id="p1score">0 / 0</div>
+        </div>
+      </div>
+      <div class="tiles" id="p1grid" style="max-width:1100px;margin:10px auto;"></div>
+      <div class="feedback" id="p1fb">&nbsp;</div>
+    </div>
+  </section>
+
+  <!-- PANEL 2: Numbers 20-100 -->
+  <section class="panel" id="p2">
+    <div class="card">
+      <div class="phead">
+        <h2>🔢 Numbers 20–100</h2>
+        <div class="inst">Tap a word. Listen and say.</div>
+      </div>
+      <div class="tiles" id="p2strip"></div>
+    </div>
+    <div class="card">
+      <div class="phead"><h2>✨ Hyphen Spotlight</h2><div class="inst">Compound numbers need a hyphen.</div>
+      <div class="controls"><button class="btn orange" id="p2spotnext">Next</button></div></div>
+      <div class="big-word" id="p2spot"></div>
+      <div class="center" style="margin-top:10px;"><button class="btn" id="p2spothear">▶ Hear it</button></div>
+    </div>
+    <div class="card">
+      <div class="phead"><h2>🧱 Build a Number</h2><div class="inst">Tap a ten, then a one.</div>
+      <div class="controls"><button class="btn small" id="p2buildreset">Reset</button></div></div>
+      <div class="tiles" id="p2tens"></div>
+      <div class="tiles" id="p2ones" style="margin-top:14px;"></div>
+      <div class="big-word" id="p2built" style="margin-top:16px;min-height:70px;">&nbsp;</div>
+    </div>
+    <div class="card">
+      <div class="phead"><h2>📶 Put in Order</h2><div class="inst">Tap small to big.</div>
+      <div class="controls"><button class="btn small" id="p2ordernew">New set</button></div></div>
+      <div class="tiles" id="p2order"></div>
+      <div class="feedback" id="p2orderfb">&nbsp;</div>
+    </div>
+  </section>
+
+  <!-- PANEL 3: Clock Lab -->
+  <section class="panel" id="p3">
+    <div class="card">
+      <div class="phead">
+        <h2>🕐 Clock Lab</h2>
+        <div class="inst">Move the hands. Say the time.</div>
+        <div class="controls"><button class="btn small" id="p3rand">Random</button></div>
+      </div>
+      <div class="row">
+        <div class="clockwrap">
+          <div id="p3clock"></div>
+          <div class="digital" id="p3dig"></div>
+        </div>
+        <div class="col" style="flex:1;min-width:min(340px,100%);">
+          <div class="pm-btns"><span class="lbl">Hour</span><button class="btn" id="p3hm">−</button><button class="btn" id="p3hp">+</button></div>
+          <div class="pm-btns"><span class="lbl">Minute</span><button class="btn" id="p3mm">−</button><button class="btn" id="p3mp">+</button></div>
+          <div class="sentence" id="p3sent"></div>
+          <button class="btn orange" id="p3hear">▶ Hear it</button>
+          <div class="note">o'clock = exact hour</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL 4: Read & Set -->
+  <section class="panel" id="p4">
+    <div class="card">
+      <div class="phead">
+        <h2>👀 Read &amp; Set</h2>
+        <div class="inst" id="p4inst">Read the clock. Tap the sentence.</div>
+        <div class="controls">
+          <button class="btn orange" id="p4hear">▶ Hear</button>
+          <button class="btn green" id="p4next">Next</button>
+          <button class="btn small" id="p4reset">Reset</button>
+          <div class="score" id="p4score">0 / 0</div>
+        </div>
+      </div>
+      <div id="p4stage"></div>
+      <div class="feedback" id="p4fb">&nbsp;</div>
+    </div>
+  </section>
+
+  <!-- PANEL 5: Talk Time -->
+  <section class="panel" id="p5">
+    <div class="card">
+      <div class="phead">
+        <h2>🗣 Talk Time</h2>
+        <div class="inst">Ask and answer with your partner.</div>
+        <div class="controls"><button class="btn orange" id="p5new">New clock</button></div>
+      </div>
+      <div class="row">
+        <div class="clockwrap"><div id="p5clock"></div></div>
+        <div class="col" style="flex:1;min-width:min(400px,100%);align-items:stretch;">
+          <div class="dialogue" id="p5dialogue"></div>
+          <button class="btn" id="p5hear">▶ Hear the dialogue</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="phead"><h2>🔗 Match It</h2><div class="inst">Match the time and the activity.</div>
+      <div class="controls"><button class="btn small" id="p5matchreset">Reset</button></div></div>
+      <div class="matchzone">
+        <div class="mcol" id="p5times"></div>
+        <div class="mcol" id="p5acts"></div>
+      </div>
+      <div class="feedback" id="p5fb">&nbsp;</div>
+    </div>
+    <div class="card">
+      <div class="phead"><h2>⏰ Don't be late!</h2><div class="inst">Why be on time? Talk together.</div>
+      <div class="controls"><button class="btn orange" id="p5why">Show ideas</button></div></div>
+      <div class="row" style="justify-content:center;">
+        <div class="dialogue" style="min-width:min(420px,100%);">
+          <b>What time is it?</b> It's nine o'clock.<br>
+          <b>It's time to have our English class!</b><br>
+          <span style="color:#e8590c;">Don't be late!</span>
+        </div>
+        <div class="dialogue hidden" id="p5ideas" style="min-width:min(420px,100%);">
+          ✅ We can learn more.<br>
+          ✅ Our friends wait for us.<br>
+          ✅ Lunch is delicious — hot and ready!<br>
+          ✅ Good job, everyone!
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL 6: Sound & Spelling -->
+  <section class="panel" id="p6">
+    <div class="card">
+      <div class="phead"><h2>🔊 Sound /ɔː/</h2><div class="inst">Tap a word. Listen and repeat.</div><span class="soundtag">or · our · all</span></div>
+      <div class="tiles" id="p6words"></div>
+    </div>
+    <div class="card">
+      <div class="phead"><h2>🕵 Odd One Out</h2><div class="inst">Tap the different sound.</div>
+      <div class="controls"><button class="btn green" id="p6oddnext">Next</button><button class="btn small" id="p6oddreset">Reset</button></div></div>
+      <div class="tiles" id="p6odd"></div>
+      <div class="feedback" id="p6oddfb">&nbsp;</div>
+    </div>
+    <div class="card">
+      <div class="phead"><h2>🧩 Spell It</h2><div class="inst">Tap the letters in order.</div>
+      <div class="controls"><button class="btn green" id="p6spellnext">Next word</button><button class="btn small" id="p6spellreset">Reset</button></div></div>
+      <div class="spell-out" id="p6out">&nbsp;</div>
+      <div class="tiles" id="p6tiles" style="margin-top:14px;"></div>
+      <div class="feedback" id="p6spellfb">&nbsp;</div>
+    </div>
+  </section>
+
+  <!-- PANEL 7: Write It Right -->
+  <section class="panel" id="p7">
+    <div class="card">
+      <div class="phead"><h2>✏ Build the Sentence</h2><div class="inst">Tap the words in order.</div>
+      <div class="controls"><button class="btn green" id="p7bnext">Next</button><button class="btn small" id="p7breset">Reset</button></div></div>
+      <div class="spell-out sentout" id="p7bout">&nbsp;</div>
+      <div class="tiles" id="p7btiles" style="margin-top:14px;"></div>
+      <div class="feedback" id="p7bfb">&nbsp;</div>
+    </div>
+    <div class="card">
+      <div class="phead"><h2>🔍 Find the Mistakes</h2><div class="inst">Tap the wrong words.</div>
+      <div class="controls"><button class="btn orange" id="p7fshow">Show answer</button><button class="btn green" id="p7fnext">Next</button></div></div>
+      <div class="tiles" id="p7fwords"></div>
+      <div class="sentence" id="p7fcorrect" style="margin-top:14px;min-height:50px;">&nbsp;</div>
+    </div>
+    <div class="card">
+      <div class="phead"><h2>💬 Complete the Dialogue</h2><div class="inst">Choose the missing words.</div>
+      <div class="controls"><button class="btn small" id="p7dreset">Reset</button></div></div>
+      <div class="dialogue" id="p7dialogue"></div>
+      <div class="tiles" id="p7dtiles" style="margin-top:14px;"></div>
+      <div class="feedback" id="p7dfb">&nbsp;</div>
+    </div>
+  </section>
+
+  <!-- PANEL 8: Team Challenge -->
+  <section class="panel" id="p8">
+    <div class="team-board">
+      <div class="team teamA" id="p8teamA"><h3>Team A</h3><div class="pts" id="p8ptsA">0</div></div>
+      <div class="team teamB" id="p8teamB"><h3>Team B</h3><div class="pts" id="p8ptsB">0</div></div>
+    </div>
+    <div class="qcard" id="p8qcard">
+      <div class="qnum" id="p8qnum"></div>
+      <div class="qtext" id="p8qtext"></div>
+      <div id="p8stage"></div>
+      <div class="teacher-bar">
+        <button class="btn orange" id="p8show">Show answer</button>
+        <button class="btn green" id="p8tick">✓ Point</button>
+        <button class="btn" style="background:#e03131;box-shadow:0 4px 0 #a61e1e;" id="p8cross">✗ No point</button>
+        <button class="btn" id="p8next">Next ➜</button>
+        <button class="btn small" id="p8reset">Reset</button>
+      </div>
+    </div>
+    <div class="remember hidden" id="p8remember">
+      <h2>🌟 Remember! 🌟</h2>
+      <ul>
+        <li>✅ <b>forty</b>, not <s>fourty</s></li>
+        <li>✅ Hyphen: <b>twenty-two, fifty-three</b></li>
+        <li>✅ <b>o'clock</b> = exact hour</li>
+        <li>✅ Capital letter + <b>?</b> in questions</li>
+        <li>✅ <b>It's</b> has an apostrophe</li>
+        <li>✅ <b>Don't be late!</b> ⏰</li>
+      </ul>
+      <div class="center" style="margin-top:16px;"><button class="btn orange" id="p8again">Play again</button></div>
+    </div>
+  </section>
+
+  </main>
+</div>
+<script>
+(function(){
+"use strict";
+/* ============ HELPERS ============ */
+var $=function(id){return document.getElementById(id);};
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function sample(a,n){return shuffle(a).slice(0,n);}
+
+var ONES=["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+var TENSW={20:"twenty",30:"thirty",40:"forty",50:"fifty",60:"sixty",70:"seventy",80:"eighty",90:"ninety"};
+function numberToWords(n){
+  if(n===100)return "one hundred";
+  if(n<20)return ONES[n];
+  var t=Math.floor(n/10)*10,o=n%10;
+  return o?TENSW[t]+"-"+ONES[o]:TENSW[t];
+}
+var MINS=[0,10,15,20,25,30,35,40,45,50,55];
+function timeToWords(h,m){
+  var s="It's "+numberToWords(h);
+  if(m===0)return s+" o'clock.";
+  return s+" "+numberToWords(m)+".";
+}
+function randTime(){return {h:1+Math.floor(Math.random()*12),m:pick(MINS)};}
+function fmtDig(h,m){return h+":"+(m<10?"0"+m:m);}
+
+/* ============ SPEECH ============ */
+var synthOK=("speechSynthesis" in window);
+var voices=[];
+function loadVoices(){try{voices=synthOK?window.speechSynthesis.getVoices():[];}catch(e){voices=[];}checkNote();}
+function enVoice(){
+  for(var i=0;i<voices.length;i++){if(/^en([-_]|$)/i.test(voices[i].lang))return voices[i];}
+  return null;
+}
+function checkNote(){
+  var bad=!synthOK;
+  if(synthOK&&voices.length>0&&!enVoice())bad=true;
+  $("speechNote").style.display=bad?"block":"none";
+}
+if(synthOK){loadVoices();window.speechSynthesis.onvoiceschanged=loadVoices;setTimeout(loadVoices,500);setTimeout(loadVoices,1500);}
+else checkNote();
+function speak(text){
+  if(!synthOK){checkNote();return;}
+  try{
+    window.speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(text);
+    var v=enVoice();if(v)u.voice=v;
+    u.lang=v?v.lang:"en-GB";u.rate=0.85;u.pitch=1.05;
+    window.speechSynthesis.speak(u);
+  }catch(e){checkNote();}
+}
+
+/* ============ CLOCK SVG ============ */
+function clockSVG(h,m,size){
+  var cx=150,cy=150,i,s="";
+  for(i=0;i<60;i++){
+    var a=i*6*Math.PI/180,big=i%5===0,r1=big?120:130;
+    s+='<line x1="'+(cx+r1*Math.sin(a)).toFixed(1)+'" y1="'+(cy-r1*Math.cos(a)).toFixed(1)+'" x2="'+(cx+136*Math.sin(a)).toFixed(1)+'" y2="'+(cy-136*Math.cos(a)).toFixed(1)+'" stroke="'+(big?"#33415c":"#c3cede")+'" stroke-width="'+(big?6:2.5)+'" stroke-linecap="round"/>';
+  }
+  for(i=1;i<=12;i++){
+    var an=i*30*Math.PI/180;
+    s+='<text x="'+(cx+100*Math.sin(an)).toFixed(1)+'" y="'+(cy-100*Math.cos(an)+12).toFixed(1)+'" text-anchor="middle" font-size="36" font-weight="800" fill="#33415c" font-family="inherit">'+i+'</text>';
+  }
+  var ma=m*6*Math.PI/180,ha=((h%12)+m/60)*30*Math.PI/180;
+  s+='<line x1="150" y1="162" x2="'+(cx+66*Math.sin(ha)).toFixed(1)+'" y2="'+(cy-66*Math.cos(ha)).toFixed(1)+'" stroke="#e63946" stroke-width="11" stroke-linecap="round"/>';
+  s+='<line x1="150" y1="162" x2="'+(cx+106*Math.sin(ma)).toFixed(1)+'" y2="'+(cy-106*Math.cos(ma)).toFixed(1)+'" stroke="#1d3557" stroke-width="7" stroke-linecap="round"/>';
+  s+='<circle cx="150" cy="150" r="10" fill="#33415c"/>';
+  return '<svg viewBox="0 0 300 300" style="width:'+size+'px;max-width:100%;height:auto;display:block" role="img" aria-label="clock"><circle cx="150" cy="150" r="145" fill="#ffffff" stroke="#33415c" stroke-width="8"/>'+s+'</svg>';
+}
+
+/* ============ TABS ============ */
+var tabs=document.querySelectorAll(".tab");
+tabs.forEach(function(t){
+  t.addEventListener("click",function(){
+    tabs.forEach(function(x){x.classList.remove("active");});
+    t.classList.add("active");
+    document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("active");});
+    $(t.dataset.p).classList.add("active");
+    $("content").scrollTop=0;t.scrollIntoView({inline:"center",block:"nearest"});
+  });
+});
+tabs[0].classList.add("active");$("p1").classList.add("active");
+
+function fb(el,msg,good){el.textContent=msg;el.className="feedback"+(good?"":" bad");}
+function clearFb(el){el.innerHTML="&nbsp;";el.className="feedback";}
+
+/* ============ PANEL 1: Number Lightning ============ */
+var P1={target:null,tries:0,score:0,total:0};
+function p1new(){
+  P1.target=20+Math.floor(Math.random()*81);
+  P1.tries=0;clearFb($("p1fb"));
+  var opts=[P1.target];
+  while(opts.length<12){var n=20+Math.floor(Math.random()*81);if(opts.indexOf(n)<0)opts.push(n);}
+  opts=shuffle(opts);
+  var g=$("p1grid");g.innerHTML="";
+  opts.forEach(function(n){
+    var b=document.createElement("button");
+    b.className="tile";b.textContent=n;b.dataset.n=n;
+    b.classList.add("numtile");
+    b.addEventListener("click",function(){
+      if(b.classList.contains("correct")||b.classList.contains("done"))return;
+      if(parseInt(b.dataset.n,10)===P1.target){
+        b.classList.add("correct");
+        P1.score++;P1.total++;$("p1score").textContent=P1.score+" / "+P1.total;
+        fb($("p1fb"),"Great! "+numberToWords(P1.target)+" ✓",true);
+        speak(numberToWords(P1.target));
+        Array.prototype.forEach.call(g.children,function(c){if(c!==b)c.classList.add("done");});
+        setTimeout(p1new,1800);
+      }else{
+        P1.tries++;b.classList.add("wrong");
+        setTimeout(function(){b.classList.remove("wrong");},450);
+        if(P1.tries>=2){
+          P1.total++;$("p1score").textContent=P1.score+" / "+P1.total;
+          fb($("p1fb"),"It was "+P1.target+". Listen again!",false);
+          Array.prototype.forEach.call(g.children,function(c){if(parseInt(c.dataset.n,10)===P1.target)c.classList.add("correct");else c.classList.add("done");});
+          setTimeout(p1new,2200);
+        }else fb($("p1fb"),"Try again.",false);
+      }
+    });
+    g.appendChild(b);
+  });
+}
+$("p1hear").addEventListener("click",function(){speak(numberToWords(P1.target));});
+$("p1reset").addEventListener("click",function(){P1.score=0;P1.total=0;$("p1score").textContent="0 / 0";p1new();});
+p1new();
+
+/* ============ PANEL 2: Numbers ============ */
+var tensWords=[20,30,40,50,60,70,80,90,100];
+var strip=$("p2strip");
+tensWords.forEach(function(n){
+  var b=document.createElement("button");
+  b.className="wordcard";b.innerHTML=numberToWords(n)+' <span class="wn">'+n+"</span>";
+  b.addEventListener("click",function(){speak(numberToWords(n));});
+  strip.appendChild(b);
+});
+var p2spotN=null;
+function p2spot(){
+  p2spotN=21+Math.floor(Math.random()*78);
+  if(p2spotN%10===0)p2spotN+=3;
+  var w=numberToWords(p2spotN),parts=w.split("-");
+  $("p2spot").innerHTML=parts[0]+'<span class="hyphen-hl">-</span>'+parts[1]+' <span class="wn big">'+p2spotN+"</span>";
+}
+$("p2spotnext").addEventListener("click",p2spot);
+$("p2spothear").addEventListener("click",function(){speak(numberToWords(p2spotN));});
+p2spot();
+var P2B={ten:null,one:null};
+var tWrap=$("p2tens"),oWrap=$("p2ones");
+[20,30,40,50,60,70,80,90].forEach(function(t){
+  var b=document.createElement("button");
+  b.className="tile";b.textContent=TENSW[t];b.dataset.v=t;
+  b.addEventListener("click",function(){
+    P2B.ten=t;
+    Array.prototype.forEach.call(tWrap.children,function(c){c.classList.remove("picked");});
+    b.classList.add("picked");p2buildShow();
+  });
+  tWrap.appendChild(b);
+});
+for(var d=1;d<=9;d++){(function(dd){
+  var b=document.createElement("button");
+  b.className="tile";b.textContent=ONES[dd];b.dataset.v=dd;b.classList.add("onetile");
+  b.addEventListener("click",function(){
+    P2B.one=dd;
+    Array.prototype.forEach.call(oWrap.children,function(c){c.classList.remove("picked");});
+    b.classList.add("picked");p2buildShow();
+  });
+  oWrap.appendChild(b);
+})(d);}
+function p2buildShow(){
+  if(P2B.ten===null)return;
+  var n=P2B.ten+(P2B.one||0);
+  $("p2built").innerHTML=numberToWords(n)+' = <span style="color:#5c7cfa;">'+n+"</span>";
+  speak(numberToWords(n));
+}
+$("p2buildreset").addEventListener("click",function(){
+  P2B.ten=null;P2B.one=null;$("p2built").innerHTML="&nbsp;";
+  Array.prototype.forEach.call(tWrap.children,function(c){c.classList.remove("picked");});
+  Array.prototype.forEach.call(oWrap.children,function(c){c.classList.remove("picked");});
+});
+function p2orderNew(){
+  clearFb($("p2orderfb"));
+  var nums=[];
+  while(nums.length<5){var n=20+Math.floor(Math.random()*81);if(nums.indexOf(n)<0)nums.push(n);}
+  var sorted=nums.slice().sort(function(a,b){return a-b;});
+  var shown=shuffle(nums),step=0;
+  var w=$("p2order");w.innerHTML="";
+  shown.forEach(function(n){
+    var b=document.createElement("button");
+    b.className="tile";b.innerHTML=numberToWords(n)+'<br><span class="wn sm">'+n+"</span>";
+    b.addEventListener("click",function(){
+      if(b.classList.contains("done"))return;
+      if(n===sorted[step]){
+        step++;b.classList.add("done");
+        b.innerHTML="✔ "+numberToWords(n);
+        speak(numberToWords(n));
+        if(step===5)fb($("p2orderfb"),"Well done! In order! 🌟",true);
+      }else{
+        b.classList.add("wrong");setTimeout(function(){b.classList.remove("wrong");},450);
+        fb($("p2orderfb"),"Try again. Smallest first!",false);
+      }
+    });
+    w.appendChild(b);
+  });
+}
+$("p2ordernew").addEventListener("click",p2orderNew);
+p2orderNew();
+
+/* ============ PANEL 3: Clock Lab ============ */
+var P3={h:10,m:10};
+function p3draw(){
+  var cs=Math.min(520,Math.max(300,Math.floor(window.innerHeight*0.48)));
+  $("p3clock").innerHTML=clockSVG(P3.h,P3.m,cs);
+  $("p3dig").textContent=fmtDig(P3.h,P3.m);
+  $("p3sent").textContent=timeToWords(P3.h,P3.m);
+}
+function p3stepMin(dir){
+  var i=MINS.indexOf(P3.m);
+  if(i<0)i=0;
+  i=(i+dir+MINS.length)%MINS.length;
+  P3.m=MINS[i];p3draw();
+}
+$("p3hp").addEventListener("click",function(){P3.h=P3.h%12+1;p3draw();});
+$("p3hm").addEventListener("click",function(){P3.h=(P3.h+10)%12+1;p3draw();});
+$("p3mp").addEventListener("click",function(){p3stepMin(1);});
+$("p3mm").addEventListener("click",function(){p3stepMin(-1);});
+$("p3rand").addEventListener("click",function(){var t=randTime();P3.h=t.h;P3.m=t.m;p3draw();});
+$("p3hear").addEventListener("click",function(){speak(timeToWords(P3.h,P3.m));});
+p3draw();
+
+/* ============ PANEL 4: Read & Set ============ */
+var P4={mode:"read",t:null,tries:0,score:0,total:0,set:{h:12,m:0},locked:false};
+function p4new(){
+  P4.t=randTime();P4.tries=0;P4.locked=false;
+  P4.mode=(Math.random()<0.5)?"read":"set";
+  clearFb($("p4fb"));
+  var st=$("p4stage");st.innerHTML="";
+  if(P4.mode==="read"){
+    $("p4inst").textContent="Read the clock. Tap the sentence.";
+    var wrap=document.createElement("div");wrap.className="row";
+    var cw=document.createElement("div");cw.className="clockwrap";
+    cw.innerHTML=clockSVG(P4.t.h,P4.t.m,Math.min(420,Math.max(280,Math.floor(window.innerHeight*0.42))));
+    wrap.appendChild(cw);
+    var ch=document.createElement("div");ch.className="choices";ch.style.flex="1";ch.style.minWidth="min(420px,100%)";
+    var correct=timeToWords(P4.t.h,P4.t.m);
+    var opts=[correct];
+    while(opts.length<3){var tt=randTime();var s=timeToWords(tt.h,tt.m);if(opts.indexOf(s)<0)opts.push(s);}
+    shuffle(opts).forEach(function(s){
+      var b=document.createElement("button");b.className="choice";b.textContent=s;
+      b.addEventListener("click",function(){p4check(b,s===correct,ch);});
+      ch.appendChild(b);
+    });
+    wrap.appendChild(ch);st.appendChild(wrap);
+  }else{
+    $("p4inst").textContent="Read. Set the clock. Tap Check.";
+    P4.set={h:12,m:0};
+    var wrap2=document.createElement("div");wrap2.className="row";
+    var cw2=document.createElement("div");cw2.className="clockwrap";
+    cw2.innerHTML='<div id="p4setclock"></div><div class="digital" id="p4setdig"></div>';
+    var col=document.createElement("div");col.className="col";col.style.flex="1";col.style.minWidth="min(380px,100%)";
+    col.innerHTML='<div class="sentence xl">'+timeToWords(P4.t.h,P4.t.m)+'</div>'+
+      '<div class="pm-btns"><span class="lbl">Hour</span><button class="btn" id="p4hm">−</button><button class="btn" id="p4hp">+</button></div>'+
+      '<div class="pm-btns"><span class="lbl">Minute</span><button class="btn" id="p4mm">−</button><button class="btn" id="p4mp">+</button></div>'+
+      '<button class="btn green" id="p4checkbtn">✔ Check</button>';
+    wrap2.appendChild(cw2);wrap2.appendChild(col);st.appendChild(wrap2);
+    function drawSet(){
+      $("p4setclock").innerHTML=clockSVG(P4.set.h,P4.set.m,Math.min(420,Math.max(280,Math.floor(window.innerHeight*0.42))));
+      $("p4setdig").textContent=fmtDig(P4.set.h,P4.set.m);
+    }
+    drawSet();
+    $("p4hp").addEventListener("click",function(){if(P4.locked)return;P4.set.h=P4.set.h%12+1;drawSet();});
+    $("p4hm").addEventListener("click",function(){if(P4.locked)return;P4.set.h=(P4.set.h+10)%12+1;drawSet();});
+    $("p4mp").addEventListener("click",function(){if(P4.locked)return;var i=MINS.indexOf(P4.set.m);P4.set.m=MINS[(i+1)%MINS.length];drawSet();});
+    $("p4mm").addEventListener("click",function(){if(P4.locked)return;var i=MINS.indexOf(P4.set.m);P4.set.m=MINS[(i+MINS.length-1)%MINS.length];drawSet();});
+    $("p4checkbtn").addEventListener("click",function(){
+      if(P4.locked)return;
+      if(P4.set.h===P4.t.h&&P4.set.m===P4.t.m){
+        P4.locked=true;P4.score++;P4.total++;
+        $("p4score").textContent=P4.score+" / "+P4.total;
+        fb($("p4fb"),"Perfect! "+timeToWords(P4.t.h,P4.t.m),true);
+        speak(timeToWords(P4.t.h,P4.t.m));
+      }else{
+        P4.tries++;
+        if(P4.tries>=2){
+          P4.locked=true;P4.total++;
+          $("p4score").textContent=P4.score+" / "+P4.total;
+          fb($("p4fb"),"It was "+fmtDig(P4.t.h,P4.t.m)+". Look: "+timeToWords(P4.t.h,P4.t.m),false);
+        }else fb($("p4fb"),"Try again. Check the hands!",false);
+      }
+    });
+  }
+}
+function p4check(btn,ok,container){
+  if(P4.locked)return;
+  if(ok){
+    P4.locked=true;btn.classList.add("correct");
+    P4.score++;P4.total++;$("p4score").textContent=P4.score+" / "+P4.total;
+    fb($("p4fb"),"Great reading! ✓",true);
+    speak(timeToWords(P4.t.h,P4.t.m));
+  }else{
+    P4.tries++;btn.classList.add("wrong");
+    setTimeout(function(){btn.classList.remove("wrong");},450);
+    if(P4.tries>=2){
+      P4.locked=true;P4.total++;$("p4score").textContent=P4.score+" / "+P4.total;
+      Array.prototype.forEach.call(container.children,function(c){
+        if(c.textContent===timeToWords(P4.t.h,P4.t.m))c.classList.add("reveal");
+      });
+      fb($("p4fb"),"Look: "+timeToWords(P4.t.h,P4.t.m),false);
+    }else fb($("p4fb"),"Try again.",false);
+  }
+}
+$("p4next").addEventListener("click",p4new);
+$("p4hear").addEventListener("click",function(){speak(timeToWords(P4.t.h,P4.t.m));});
+$("p4reset").addEventListener("click",function(){P4.score=0;P4.total=0;$("p4score").textContent="0 / 0";p4new();});
+p4new();
+
+/* ============ PANEL 5: Talk Time ============ */
+var P5={t:randTime(),act:null};
+var ACTS=[
+  {time:{h:12,m:0},act:"have lunch",emoji:"🍽"},
+  {time:{h:10,m:15},act:"have our English class",emoji:"📚"},
+  {time:{h:1,m:0},act:"go",emoji:"🏃",note:"Time to go!"}
+];
+function p5new(){
+  P5.t=randTime();
+  var cs=Math.min(360,Math.max(260,Math.floor(window.innerHeight*0.38)));
+  $("p5clock").innerHTML=clockSVG(P5.t.h,P5.t.m,cs);
+  var act=pick(ACTS);
+  P5.act=act;
+  $("p5dialogue").innerHTML=
+    'A: <b>What time is it?</b><br>'+
+    'B: <b>'+timeToWords(P5.t.h,P5.t.m)+'</b><br>'+
+    'A: <b>It\'s time to '+act.act+'!</b> '+act.emoji+'<br>'+
+    '<span style="font-size:24px;color:#e8590c;">Lunch is delicious! 😋</span>';
+}
+$("p5new").addEventListener("click",p5new);
+$("p5hear").addEventListener("click",function(){
+  speak("What time is it? "+timeToWords(P5.t.h,P5.t.m)+" It's time to "+P5.act.act+"!");
+});
+p5new();
+var P5M={pickT:null,done:0};
+function p5match(){
+  P5M.pickT=null;P5M.done=0;clearFb($("p5fb"));
+  var tw=$("p5times"),aw=$("p5acts");
+  tw.innerHTML="";aw.innerHTML="";
+  shuffle(ACTS).forEach(function(a,i){
+    var b=document.createElement("button");
+    b.className="mtile";b.textContent=timeToWords(a.time.h,a.time.m);b.dataset.i=ACTS.indexOf(a);
+    b.addEventListener("click",function(){
+      if(b.classList.contains("done"))return;
+      Array.prototype.forEach.call(tw.children,function(c){c.classList.remove("picked");});
+      b.classList.add("picked");P5M.pickT=b;
+      speak(b.textContent);
+    });
+    tw.appendChild(b);
+  });
+  shuffle(ACTS).forEach(function(a){
+    var b=document.createElement("button");
+    b.className="mtile right";b.innerHTML=a.emoji+" It's time to <b>"+a.act+"</b>.";b.dataset.i=ACTS.indexOf(a);
+    b.addEventListener("click",function(){
+      if(b.classList.contains("done"))return;
+      if(!P5M.pickT){fb($("p5fb"),"Tap a time first!",false);return;}
+      if(P5M.pickT.dataset.i===b.dataset.i){
+        P5M.pickT.classList.remove("picked");P5M.pickT.classList.add("done");
+        b.classList.add("done");P5M.pickT=null;P5M.done++;
+        speak("It's time to "+a.act+".");
+        if(P5M.done===3)fb($("p5fb"),"All matched! Great talking! 🌟",true);
+      }else{
+        b.classList.add("wrong");setTimeout(function(){b.classList.remove("wrong");},450);
+        fb($("p5fb"),"Try again.",false);
+      }
+    });
+    aw.appendChild(b);
+  });
+}
+$("p5matchreset").addEventListener("click",p5match);
+p5match();
+$("p5why").addEventListener("click",function(){
+  var el=$("p5ideas");
+  el.classList.toggle("hidden");
+  if(!el.classList.contains("hidden"))speak("Don't be late! We can learn more. Our friends wait for us. Lunch is delicious!");
+});
+
+/* ============ PANEL 6: Sound & Spelling ============ */
+var ORWORDS=[
+  {w:"forty",hl:'f<span class="pat-hl">or</span>ty'},
+  {w:"horse",hl:'h<span class="pat-hl">or</span>se'},
+  {w:"short",hl:'sh<span class="pat-hl">or</span>t'},
+  {w:"your",hl:'y<span class="pat-hl">our</span>'},
+  {w:"four",hl:'f<span class="pat-hl">our</span>'},
+  {w:"tall",hl:'t<span class="pat-hl">all</span>'}
+];
+var pw=$("p6words");
+ORWORDS.forEach(function(o){
+  var b=document.createElement("button");
+  b.className="wordcard";b.innerHTML=o.hl;
+  b.addEventListener("click",function(){speak(o.w);});
+  pw.appendChild(b);
+});
+var ODDS=[
+  {set:["horse","short","forty"],odd:"sunny"},
+  {set:["four","your","tall"],odd:"book"},
+  {set:["short","horse","tall"],odd:"pen"},
+  {set:["forty","four","your"],odd:"cat"},
+  {set:["tall","short","horse"],odd:"dog"},
+  {set:["four","forty","short"],odd:"bird"}
+];
+var P6O={idx:0,tries:0};
+function p6odd(){
+  var q=ODDS[P6O.idx%ODDS.length];P6O.tries=0;
+  clearFb($("p6oddfb"));
+  var w=$("p6odd");w.innerHTML="";
+  shuffle(q.set.concat([q.odd])).forEach(function(word){
+    var b=document.createElement("button");
+    b.className="wordcard";b.textContent=word;b.classList.add("odd");
+    b.addEventListener("click",function(){
+      speak(word);
+      if(word===q.odd){
+        b.classList.add("correct");
+        b.style.background="#b7f0c2";b.style.borderColor="#2f9e44";
+        fb($("p6oddfb"),"Yes! "+word+" has a different sound. ✓",true);
+        Array.prototype.forEach.call(w.children,function(c){c.disabled=true;});
+      }else{
+        P6O.tries++;
+        b.classList.add("wrong");setTimeout(function(){b.classList.remove("wrong");},450);
+        fb($("p6oddfb"),P6O.tries>=2?"Listen: "+q.set.join(", ")+" — they say /ɔː/.":"Try again. Listen!",false);
+      }
+    });
+    w.appendChild(b);
+  });
+}
+$("p6oddnext").addEventListener("click",function(){P6O.idx++;p6odd();});
+$("p6oddreset").addEventListener("click",function(){P6O.idx=0;p6odd();});
+p6odd();
+var SPELLS=["forty","horse","short","your","four","tall"];
+var P6S={idx:0,pos:0};
+function p6spell(){
+  var word=SPELLS[P6S.idx%SPELLS.length];P6S.pos=0;
+  clearFb($("p6spellfb"));
+  $("p6out").innerHTML="&nbsp;";
+  var w=$("p6tiles");w.innerHTML="";
+  var letters=shuffle(word.split(""));
+  letters.forEach(function(L){
+    var b=document.createElement("button");
+    b.className="tile";b.textContent=L;b.classList.add("letter");
+    b.addEventListener("click",function(){
+      if(b.classList.contains("done"))return;
+      if(L===word[P6S.pos]){
+        b.classList.add("done");P6S.pos++;
+        $("p6out").textContent=word.slice(0,P6S.pos);
+        if(P6S.pos===word.length){
+          $("p6out").textContent=word;
+          var hl=ORWORDS.filter(function(o){return o.w===word;})[0];
+          $("p6out").innerHTML=hl.hl;
+          fb($("p6spellfb"),"Well done! "+word+" ✓",true);
+          speak(word);
+        }
+      }else{
+        b.classList.add("wrong");setTimeout(function(){b.classList.remove("wrong");},450);
+        fb($("p6spellfb"),word==="forty"&&P6S.pos===0?"Careful: forty has no u!":"Try again.",false);
+      }
+    });
+    w.appendChild(b);
+  });
+}
+$("p6spellnext").addEventListener("click",function(){P6S.idx++;p6spell();});
+$("p6spellreset").addEventListener("click",function(){P6S.idx=0;p6spell();});
+p6spell();
+
+/* ============ PANEL 7: Write It Right ============ */
+var BUILDS=[
+  ["What","time","is","it","?"],
+  ["It's","seven","o'clock","."],
+  ["It's","twenty","-","five","."],
+  ["It's","time","to","go","."],
+  ["What","day","is","it","?"]
+];
+var P7B={idx:0,pos:0};
+function p7build(){
+  var words=BUILDS[P7B.idx%BUILDS.length];P7B.pos=0;
+  clearFb($("p7bfb"));
+  $("p7bout").innerHTML="&nbsp;";
+  var w=$("p7btiles");w.innerHTML="";
+  shuffle(words.map(function(x,i){return {w:x,i:i};})).forEach(function(o){
+    var b=document.createElement("button");
+    b.className="tile";b.textContent=o.w;
+    b.addEventListener("click",function(){
+      if(b.classList.contains("done"))return;
+      if(o.i===P7B.pos){
+        b.classList.add("done");P7B.pos++;
+        $("p7bout").textContent=words.slice(0,P7B.pos).join(" ").replace(/ ([?.])/g,"$1").replace(/ - /g,"-");
+        if(P7B.pos===words.length){
+          fb($("p7bfb"),"Perfect sentence! ✓",true);
+          speak(words.join(" ").replace(/ [?.]/g,"").replace(/ - /g,"-"));
+        }
+      }else{
+        b.classList.add("wrong");setTimeout(function(){b.classList.remove("wrong");},450);
+        fb($("p7bfb"),"Try again.",false);
+      }
+    });
+    w.appendChild(b);
+  });
+}
+$("p7bnext").addEventListener("click",function(){P7B.idx++;p7build();});
+$("p7breset").addEventListener("click",function(){P7B.idx=0;p7build();});
+p7build();
+var FINDS=[
+  {words:["what","time","is","it","."],bad:["what","."],fix:"What time is it?",note:"Capital W + question mark!"},
+  {words:["Its","five","o'clock","."],bad:["Its"],fix:"It's five o'clock.",note:"It's needs an apostrophe!"},
+  {words:["It's","fourty","five","."],bad:["fourty","five"],fix:"It's forty-five.",note:"forty + hyphen: forty-five!"},
+  {words:["It's","twenty","two","."],bad:["twenty","two"],fix:"It's twenty-two.",note:"Compound numbers need a hyphen!"},
+  {words:["what","day","is","it","."],bad:["what","."],fix:"What day is it?",note:"Capital W + question mark!"}
+];
+var P7F={idx:0,found:0};
+function p7find(){
+  var q=FINDS[P7F.idx%FINDS.length];P7F.found=0;
+  $("p7fcorrect").innerHTML="&nbsp;";
+  var w=$("p7fwords");w.innerHTML="";
+  q.words.forEach(function(word,i){
+    var b=document.createElement("button");
+    b.className="tile";b.textContent=word;b.dataset.i=i;b.classList.add("fw");
+    b.addEventListener("click",function(){
+      if(b.classList.contains("done")||b.classList.contains("correct"))return;
+      if(q.bad.indexOf(word)>=0&&q.words.indexOf(word)===i){
+        b.classList.add("correct");P7F.found++;
+        if(P7F.found===q.bad.length){
+          $("p7fcorrect").innerHTML="✅ "+q.fix+"<br><span class='fixnote'>"+q.note+"</span>";
+          speak(q.fix);
+        }
+      }else{
+        b.classList.add("wrong");setTimeout(function(){b.classList.remove("wrong");},450);
+      }
+    });
+    w.appendChild(b);
+  });
+}
+$("p7fshow").addEventListener("click",function(){
+  var q=FINDS[P7F.idx%FINDS.length];
+  var w=$("p7fwords");
+  Array.prototype.forEach.call(w.children,function(c,i){
+    if(q.bad.indexOf(c.textContent)>=0&&q.words.indexOf(c.textContent)===i)c.classList.add("correct");
+  });
+  $("p7fcorrect").innerHTML="✅ "+q.fix+"<br><span class='fixnote'>"+q.note+"</span>";
+  P7F.found=q.bad.length;
+});
+$("p7fnext").addEventListener("click",function(){P7F.idx++;p7find();});
+p7find();
+var DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+var P7D={step:0,day:null,num:null};
+function p7dialogue(){
+  P7D.step=0;
+  P7D.day=pick(DAYS);
+  P7D.num=pick([1,2,3,4,5,6,7,8,9,10,11,12]);
+  var mins=pick([10,15,20,25]);
+  P7D.mins=mins;
+  clearFb($("p7dfb"));
+  drawDlg();
+  p7dtiles();
+}
+function drawDlg(){
+  var d=P7D.step>0?P7D.day:"?";
+  var full=P7D.num+" "+numberToWords(P7D.mins);
+  var t=P7D.step>1?full:"?";
+  $("p7dialogue").innerHTML=
+    'A: What day is it?<br>'+
+    'B: It\'s <span class="gap">'+(P7D.step>0?P7D.day:"&nbsp;")+'</span>.<br>'+
+    'A: What time is it?<br>'+
+    'B: It\'s <span class="gap">'+(P7D.step>1?(ONES[P7D.num]+" "+numberToWords(P7D.mins)):"&nbsp;")+'</span>.<br>'+
+    'A: Thank you! 😊';
+}
+function p7dtiles(){
+  var w=$("p7dtiles");w.innerHTML="";
+  var opts,correct;
+  if(P7D.step===0){opts=sample(DAYS.filter(function(x){return x!==P7D.day;}),3).concat([P7D.day]);correct=P7D.day;}
+  else if(P7D.step===1){var others=sample([1,2,3,4,5,6,7,8,9,10,11,12].filter(function(x){return x!==P7D.num;}),3);opts=others.concat([P7D.num]);correct=P7D.num;}
+  else{
+    fb($("p7dfb"),"Great dialogue! Read it together! 🌟",true);
+    speak("What day is it? It's "+P7D.day+". What time is it? It's "+P7D.num+" "+numberToWords(P7D.mins)+". Thank you.");
+    return;
+  }
+  shuffle(opts).forEach(function(o){
+    var b=document.createElement("button");
+    b.className="tile";
+    b.textContent=(typeof o==="number")?o+" ("+ONES[o]+")":o;
+    b.addEventListener("click",function(){
+      if(o===correct){
+        P7D.step++;drawDlg();p7dtiles();
+      }else{
+        b.classList.add("wrong");setTimeout(function(){b.classList.remove("wrong");},450);
+        fb($("p7dfb"),"Try again.",false);
+      }
+    });
+    w.appendChild(b);
+  });
+}
+$("p7dreset").addEventListener("click",p7dialogue);
+p7dialogue();
+
+/* ============ PANEL 8: Team Challenge ============ */
+function mkClockQ(h,m,distractors){
+  return {type:"clock",h:h,m:m,opts:distractors.concat([timeToWords(h,m)]),answer:timeToWords(h,m),q:"What time is it?"};
+}
+var QUESTIONS=[
+  mkClockQ(3,0,["It's four o'clock.","It's three thirty."]),
+  {type:"num2word",n:47,opts:["fourty-seven","forty-seven","fourteen-seven"],answer:"forty-seven",q:"47 — tap the word."},
+  {type:"word2num",w:"sixty-two",opts:[26,62,72],answer:62,q:"sixty-two — tap the number."},
+  {type:"pick",opts:["fourty","forty","forteen"],answer:"forty",q:"Which word is correct?"},
+  mkClockQ(7,30,["It's six thirty.","It's seven twenty."]),
+  {type:"num2word",n:15,opts:["fifty","fiveteen","fifteen"],answer:"fifteen",q:"15 — tap the word."},
+  {type:"pick",opts:["What time is it?","What time it is?","What is time it?"],answer:"What time is it?",q:"Which question is correct?"},
+  mkClockQ(9,25,["It's nine thirty-five.","It's ten twenty-five."]),
+  {type:"pick",opts:["Its five o'clock.","It's five o'clock.","Its' five o'clock."],answer:"It's five o'clock.",q:"Which sentence is correct?"},
+  {type:"num2word",n:85,opts:["eight-five","eighty-five","eighteen-five"],answer:"eighty-five",q:"85 — tap the word."},
+  {type:"word2num",w:"ninety-one",opts:[19,81,91],answer:91,q:"ninety-one — tap the number."},
+  {type:"pick",opts:["have lunch","go to bed","get up"],answer:"have lunch",q:"It's twelve o'clock. It's time to …"}
+];
+var P8={q:0,turn:"A",a:0,b:0,done:false};
+function p8render(){
+  if(P8.q>=QUESTIONS.length){
+    $("p8qcard").classList.add("hidden");
+    $("p8remember").classList.remove("hidden");
+    P8.done=true;
+    var msg=P8.a===P8.b?"It's a draw! Well done, everyone!":(P8.a>P8.b?"Team A wins! 🏆":"Team B wins! 🏆");
+    speak(msg);
+    $("p8teamA").classList.toggle("turn",P8.a>=P8.b);
+    $("p8teamB").classList.toggle("turn",P8.b>P8.a);
+    return;
+  }
+  P8.done=false;
+  $("p8qcard").classList.remove("hidden");
+  $("p8remember").classList.add("hidden");
+  $("p8teamA").classList.toggle("turn",P8.turn==="A");
+  $("p8teamB").classList.toggle("turn",P8.turn==="B");
+  var q=QUESTIONS[P8.q];
+  $("p8qnum").textContent="Question "+(P8.q+1)+" / "+QUESTIONS.length+"  ·  Team "+P8.turn+"'s turn";
+  $("p8qtext").textContent=q.q;
+  var st=$("p8stage");st.innerHTML="";
+  var ch=document.createElement("div");ch.className="choices";
+  if(q.type==="clock"){
+    var wrap=document.createElement("div");wrap.className="row";
+    var cw=document.createElement("div");cw.innerHTML=clockSVG(q.h,q.m,300);
+    wrap.appendChild(cw);
+    ch.style.flex="1";ch.style.minWidth="min(420px,100%)";
+    wrap.appendChild(ch);st.appendChild(wrap);
+  }else st.appendChild(ch);
+  shuffle(q.opts).forEach(function(o){
+    var b=document.createElement("button");b.className="choice";b.style.textAlign="center";
+    b.textContent=(typeof o==="number")?String(o):o;
+    b.addEventListener("click",function(){
+      speak(b.textContent);
+    });
+    ch.appendChild(b);
+  });
+}
+function p8show(){
+  if(P8.done)return;
+  var q=QUESTIONS[P8.q];
+  var st=$("p8stage");
+  Array.prototype.forEach.call(st.querySelectorAll(".choice"),function(c){
+    if(c.textContent===String(q.answer))c.classList.add("reveal");
+  });
+  speak(String(q.answer));
+}
+function p8nextQ(){
+  P8.q++;
+  P8.turn=(P8.turn==="A")?"B":"A";
+  p8render();
+}
+$("p8show").addEventListener("click",p8show);
+$("p8tick").addEventListener("click",function(){
+  if(P8.done)return;
+  if(P8.turn==="A"){P8.a++;$("p8ptsA").textContent=P8.a;}
+  else{P8.b++;$("p8ptsB").textContent=P8.b;}
+  p8nextQ();
+});
+$("p8cross").addEventListener("click",function(){if(!P8.done)p8nextQ();});
+$("p8next").addEventListener("click",function(){if(!P8.done)p8nextQ();});
+$("p8reset").addEventListener("click",function(){
+  P8.q=0;P8.turn="A";P8.a=0;P8.b=0;
+  $("p8ptsA").textContent="0";$("p8ptsB").textContent="0";
+  p8render();
+});
+$("p8again").addEventListener("click",function(){
+  P8.q=0;P8.turn="A";P8.a=0;P8.b=0;
+  $("p8ptsA").textContent="0";$("p8ptsB").textContent="0";
+  p8render();
+});
+p8render();
+
+window.addEventListener("resize",function(){p3draw();});
+})();
+</script>
+</body>
+</html>
